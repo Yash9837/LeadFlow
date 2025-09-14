@@ -281,29 +281,6 @@ src/
 └── test/                  # Test setup
 ```
 
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. **Connect Repository:**
-   ```bash
-   npm i -g vercel
-   vercel --prod
-   ```
-
-2. **Environment Variables:**
-   - Add all environment variables in Vercel dashboard
-   - Set `NEXTAUTH_URL` to your production domain
-
-3. **Database:**
-   - Run migrations on production database
-   - Ensure Supabase project is configured
-
-### Other Platforms
-
-**Railway/Render/Netlify:**
-- Connect GitHub repository
-- Set environment variables
 - Configure build command: `npm run build`
 - Set start command: `npm start`
 
