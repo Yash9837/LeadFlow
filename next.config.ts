@@ -2,7 +2,7 @@
 const nextConfig = {
   // This enables CSS optimization which uses lightningcss
   experimental: {
-    optimizeCss: false,
+    optimizeCss: true,
   },
   // Optional: If you're using styled-components
   compiler: {
