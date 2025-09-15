@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +13,6 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
   const supabase = createClient();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -38,7 +35,7 @@ export default function LoginPage() {
         setMessage('Check your email for the login link!');
         setSuccess(true);
       }
-    } catch (error) {
+    } catch {
       setMessage('An unexpected error occurred');
       setSuccess(false);
     } finally {
@@ -190,7 +187,7 @@ export default function LoginPage() {
 
               <div className="text-center">
                 <p className="text-xs text-muted-foreground">
-                  We'll send you a secure login link via email.<br />
+                  We&apos;ll send you a secure login link via email.<br />
                   No password required.
                 </p>
               </div>

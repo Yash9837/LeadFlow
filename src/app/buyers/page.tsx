@@ -1,8 +1,7 @@
 import { Suspense } from 'react';
-import { createClient } from '@/lib/supabase/server';
 import { getCurrentUser, canViewAllBuyers } from '@/lib/auth';
 import { db, buyers } from '@/lib/db';
-import { eq, desc, and, ilike, or, sql } from 'drizzle-orm';
+import { eq, desc, asc, and, ilike, or, sql } from 'drizzle-orm';
 import BuyersList from '@/components/buyers-list';
 import Navigation from '@/components/navigation';
 import { redirect } from 'next/navigation';
@@ -45,19 +44,19 @@ async function getBuyers(searchParams: BuyersPageProps['searchParams']) {
   }
 
   if (params.city) {
-    conditions.push(eq(buyers.city, params.city as any));
+    conditions.push(eq(buyers.city, params.city as 'Chandigarh' | 'Mohali' | 'Zirakpur' | 'Panchkula' | 'Other'));
   }
 
   if (params.propertyType) {
-    conditions.push(eq(buyers.propertyType, params.propertyType as any));
+    conditions.push(eq(buyers.propertyType, params.propertyType as 'Apartment' | 'Villa' | 'Plot' | 'Office' | 'Retail'));
   }
 
   if (params.status) {
-    conditions.push(eq(buyers.status, params.status as any));
+    conditions.push(eq(buyers.status, params.status as 'New' | 'Qualified' | 'Contacted' | 'Visited' | 'Negotiation' | 'Converted' | 'Dropped'));
   }
 
   if (params.timeline) {
-    conditions.push(eq(buyers.timeline, params.timeline as any));
+    conditions.push(eq(buyers.timeline, params.timeline as '0-3m' | '3-6m' | '>6m' | 'Exploring'));
   }
 
   // Build sort order
@@ -65,9 +64,37 @@ async function getBuyers(searchParams: BuyersPageProps['searchParams']) {
   if (params.sort) {
     const [field, direction] = params.sort.split(':');
     if (field && direction) {
-      const column = buyers[field as keyof typeof buyers];
-      if (column) {
-        orderBy = direction === 'asc' ? column : desc(column);
+      switch (field) {
+        case 'fullName':
+          orderBy = direction === 'asc' ? asc(buyers.fullName) : desc(buyers.fullName);
+          break;
+        case 'phone':
+          orderBy = direction === 'asc' ? asc(buyers.phone) : desc(buyers.phone);
+          break;
+        case 'city':
+          orderBy = direction === 'asc' ? asc(buyers.city) : desc(buyers.city);
+          break;
+        case 'propertyType':
+          orderBy = direction === 'asc' ? asc(buyers.propertyType) : desc(buyers.propertyType);
+          break;
+        case 'budgetMin':
+          orderBy = direction === 'asc' ? asc(buyers.budgetMin) : desc(buyers.budgetMin);
+          break;
+        case 'budgetMax':
+          orderBy = direction === 'asc' ? asc(buyers.budgetMax) : desc(buyers.budgetMax);
+          break;
+        case 'timeline':
+          orderBy = direction === 'asc' ? asc(buyers.timeline) : desc(buyers.timeline);
+          break;
+        case 'status':
+          orderBy = direction === 'asc' ? asc(buyers.status) : desc(buyers.status);
+          break;
+        case 'updatedAt':
+          orderBy = direction === 'asc' ? asc(buyers.updatedAt) : desc(buyers.updatedAt);
+          break;
+        case 'createdAt':
+          orderBy = direction === 'asc' ? asc(buyers.createdAt) : desc(buyers.createdAt);
+          break;
       }
     }
   }

@@ -2,11 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
 import { requireAuth, canEditBuyer } from '@/lib/auth';
-import { db, buyers, buyerHistory } from '@/lib/db';
-import { createBuyerSchema, updateBuyerSchema, csvBuyerSchema } from '@/lib/validations/buyer';
-import { eq, and } from 'drizzle-orm';
+import { db, buyers, buyerHistory, type Buyer, type NewBuyer } from '@/lib/db';
+import { createBuyerSchema, updateBuyerSchema } from '@/lib/validations/buyer';
+import { eq } from 'drizzle-orm';
 import { LRUCache } from 'lru-cache';
 
 // Rate limiting cache (in-memory, not production-ready but demonstrates the concept)
@@ -65,10 +64,25 @@ export async function createBuyer(formData: FormData) {
     // Insert buyer in transaction
     const result = await db.transaction(async (tx) => {
       // Insert the buyer
-      const [newBuyer] = await tx.insert(buyers).values({
-        ...validatedData,
+      const insertData: NewBuyer = {
+        fullName: validatedData.fullName,
+        email: validatedData.email,
+        phone: validatedData.phone,
+        city: validatedData.city,
+        propertyType: validatedData.propertyType,
+        bhk: validatedData.bhk,
+        purpose: validatedData.purpose,
+        budgetMin: validatedData.budgetMin,
+        budgetMax: validatedData.budgetMax,
+        timeline: validatedData.timeline,
+        source: validatedData.source,
+        status: validatedData.status,
+        notes: validatedData.notes,
+        tags: validatedData.tags,
         ownerId: user.id,
-      }).returning();
+      };
+
+      const [newBuyer] = await tx.insert(buyers).values(insertData).returning();
 
       // Create initial history entry
       await tx.insert(buyerHistory).values({
@@ -154,7 +168,7 @@ export async function updateBuyer(formData: FormData) {
     }
 
     // Calculate changes for history
-    const changes: Record<string, [any, any]> = {};
+    const changes: Record<string, [unknown, unknown]> = {};
     const fieldsToCheck = ['fullName', 'email', 'phone', 'city', 'propertyType', 'bhk', 'purpose', 'budgetMin', 'budgetMax', 'timeline', 'source', 'status', 'notes', 'tags'];
     
     for (const field of fieldsToCheck) {
@@ -237,7 +251,7 @@ export async function updateBuyerStatus(buyerId: string, status: string) {
     await db.transaction(async (tx) => {
       // Update the status
       await tx.update(buyers)
-        .set({ status: status as any })
+        .set({ status: status as Buyer['status'] })
         .where(eq(buyers.id, buyerId));
 
       // Create history entry

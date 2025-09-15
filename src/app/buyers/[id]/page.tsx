@@ -1,17 +1,14 @@
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase/server';
-import { getCurrentUser, canEditBuyer, canViewAllBuyers } from '@/lib/auth';
+import { getCurrentUser, canViewAllBuyers } from '@/lib/auth';
 import { db, buyers, buyerHistory } from '@/lib/db';
 import { eq, and, desc } from 'drizzle-orm';
 import BuyerDetail from '@/components/buyer-detail';
 import Navigation from '@/components/navigation';
 import { redirect } from 'next/navigation';
 
-interface BuyerPageProps {
-  params: {
-    id: string;
-  };
-}
+type BuyerPageProps = {
+  params: Promise<{ id: string }>;
+};
 
 async function getBuyer(id: string) {
   const user = await getCurrentUser();
@@ -47,7 +44,8 @@ async function getBuyer(id: string) {
 }
 
 export default async function BuyerPage({ params }: BuyerPageProps) {
-  const data = await getBuyer(params.id);
+  const { id } = await params;
+  const data = await getBuyer(id);
 
   if (!data) {
     notFound();

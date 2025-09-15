@@ -4,11 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createBuyerSchema, type CreateBuyerData } from '@/lib/validations/buyer';
+import { createBuyerFormSchema, type CreateBuyerFormData } from '@/lib/validations/buyer';
 import { createBuyer } from '@/lib/actions/buyers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -28,8 +27,8 @@ export default function CreateBuyerPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const form = useForm<CreateBuyerData>({
-    resolver: zodResolver(createBuyerSchema),
+  const form = useForm<CreateBuyerFormData>({
+    resolver: zodResolver(createBuyerFormSchema),
     defaultValues: {
       fullName: '',
       email: '',
@@ -50,7 +49,7 @@ export default function CreateBuyerPage() {
   const watchedPropertyType = form.watch('propertyType');
   const isBHKRequired = watchedPropertyType === 'Apartment' || watchedPropertyType === 'Villa';
 
-  const onSubmit = async (data: CreateBuyerData) => {
+  const onSubmit = async (data: CreateBuyerFormData) => {
     setIsSubmitting(true);
     setError('');
 
@@ -92,7 +91,7 @@ export default function CreateBuyerPage() {
             Back to Leads
           </Link>
           <h1 className="text-3xl font-bold text-foreground">Add New Lead</h1>
-          <p className="text-muted-foreground mt-2">Enter the buyer's information to create a new lead</p>
+          <p className="text-muted-foreground mt-2">Enter the buyer&apos;s information to create a new lead</p>
         </div>
 
         <Card className="max-w-4xl">

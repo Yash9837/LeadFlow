@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { updateBuyerSchema, type UpdateBuyerData } from '@/lib/validations/buyer';
+import { updateBuyerFormSchema, type UpdateBuyerFormData } from '@/lib/validations/buyer';
 import { updateBuyer } from '@/lib/actions/buyers';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatDate } from '@/lib/utils';
 import { type Buyer, type BuyerHistory } from '@/lib/db/schema';
 import { ArrowLeft, Save, History, Edit } from 'lucide-react';
 import Link from 'next/link';
@@ -35,8 +35,8 @@ export default function BuyerDetail({ buyer, history }: BuyerDetailProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const form = useForm<UpdateBuyerData>({
-    resolver: zodResolver(updateBuyerSchema),
+  const form = useForm<UpdateBuyerFormData>({
+    resolver: zodResolver(updateBuyerFormSchema),
     defaultValues: {
       id: buyer.id,
       fullName: buyer.fullName,
@@ -60,7 +60,7 @@ export default function BuyerDetail({ buyer, history }: BuyerDetailProps) {
   const watchedPropertyType = form.watch('propertyType');
   const isBHKRequired = watchedPropertyType === 'Apartment' || watchedPropertyType === 'Villa';
 
-  const onSubmit = async (data: UpdateBuyerData) => {
+  const onSubmit = async (data: UpdateBuyerFormData) => {
     setIsSubmitting(true);
     setError('');
 
@@ -91,8 +91,8 @@ export default function BuyerDetail({ buyer, history }: BuyerDetailProps) {
   const formatHistoryDiff = (diff: string) => {
     try {
       const changes = JSON.parse(diff);
-      return Object.entries(changes).map(([field, values]: [string, any]) => {
-        const [oldValue, newValue] = values;
+      return Object.entries(changes).map(([field, values]: [string, unknown]) => {
+        const [oldValue, newValue] = values as [unknown, unknown];
         const fieldDisplay = field.charAt(0).toUpperCase() + field.slice(1);
         
         if (field === 'created') {

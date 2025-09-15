@@ -10,7 +10,7 @@ export default function NotFound() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-red-600">Lead Not Found</CardTitle>
           <CardDescription>
-            The buyer lead you're looking for doesn't exist or you don't have permission to view it.
+            The buyer lead you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center">

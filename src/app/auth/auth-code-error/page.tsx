@@ -22,7 +22,7 @@ export default function AuthCodeErrorPage() {
             </div>
             <CardTitle className="text-2xl font-bold text-red-600">Authentication Error</CardTitle>
             <CardDescription className="text-muted-foreground">
-              We couldn't complete your login request
+              We couldn&apos;t complete your login request
             </CardDescription>
           </CardHeader>
           
@@ -48,7 +48,7 @@ export default function AuthCodeErrorPage() {
               </div>
 
               <p className="text-sm text-muted-foreground pt-2">
-                Don't worry - you can easily request a new login link.
+                Don&apos;t worry - you can easily request a new login link.
               </p>
             </div>
 

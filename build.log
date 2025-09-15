@@ -1,0 +1,21 @@
+
+> leaflow-web@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.3
+   - Environments: .env.local, .env
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 7.2s
+   Linting and checking validity of types ...
+Failed to compile.
+
+./vitest.config.ts:1:30
+Type error: Cannot find module 'vitest/config' or its corresponding type declarations.
+
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { defineConfig } [36mfrom[39m [32m'vitest/config'[39m[33m;[39m
+ [90m   |[39m                              [31m[1m^[22m[39m
+ [90m 2 |[39m [36mimport[39m { resolve } [36mfrom[39m [32m'path'[39m[33m;[39m
+ [90m 3 |[39m
+ [90m 4 |[39m [36mexport[39m [36mdefault[39m defineConfig({[0m
+Next.js build worker exited with code: 1 and signal: null

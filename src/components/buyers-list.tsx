@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   createColumnHelper,
@@ -15,7 +15,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency, formatDate, debounce } from '@/lib/utils';
 import { updateBuyerStatus } from '@/lib/actions/buyers';
 import { type Buyer } from '@/lib/db/schema';
@@ -55,7 +54,7 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
   const [sorting, setSorting] = useState<SortingState>([]);
   const [searchTerm, setSearchTerm] = useState(filters.search || '');
 
-  const updateURL = (newParams: Record<string, string | undefined>) => {
+  const updateURL = useCallback((newParams: Record<string, string | undefined>) => {
     const params = new URLSearchParams(searchParams);
     
     Object.entries(newParams).forEach(([key, value]) => {
@@ -65,12 +64,13 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
         params.delete(key);
       }
     });
-
+    
     router.push(`/buyers?${params.toString()}`);
-  };
+  }, [searchParams, router]);
 
   const debouncedSearch = useMemo(
-    () => debounce((value: string) => {
+    () => debounce((...args: unknown[]) => {
+      const value = args[0] as string;
       updateURL({ search: value || undefined, page: undefined });
     }, 500),
     [updateURL]
@@ -102,14 +102,14 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
           <div className="text-sm text-gray-500">{info.row.original.phone}</div>
         </div>
       ),
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('email', {
       header: 'Email',
       cell: (info) => info.getValue() || '-',
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('city', {
       header: 'City',
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('propertyType', {
       header: 'Property',
       cell: (info) => {
@@ -117,10 +117,10 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
         const bhk = info.row.original.bhk;
         return bhk ? `${value} (${bhk})` : value;
       },
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('purpose', {
       header: 'Purpose',
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('budgetMin', {
       header: 'Budget',
       cell: (info) => {
@@ -135,10 +135,10 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
         }
         return '-';
       },
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('timeline', {
       header: 'Timeline',
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('status', {
       header: 'Status',
       cell: (info) => {
@@ -165,11 +165,11 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
           </select>
         );
       },
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.accessor('updatedAt', {
       header: 'Last Updated',
       cell: (info) => formatDate(info.getValue()),
-    }),
+    }) as ColumnDef<Buyer>,
     columnHelper.display({
       id: 'actions',
       header: 'Actions',
@@ -181,7 +181,7 @@ export default function BuyersList({ buyers, pagination, filters }: BuyersListPr
           </Button>
         </Link>
       ),
-    }),
+    }) as ColumnDef<Buyer>,
   ];
 
   const table = useReactTable({

@@ -1,8 +1,7 @@
 'use server';
 
-import { createClient } from '@/lib/supabase/server';
 import { requireAuth, canViewAllBuyers } from '@/lib/auth';
-import { db, buyers, buyerHistory } from '@/lib/db';
+import { db, buyers, buyerHistory, type NewBuyer, type Buyer } from '@/lib/db';
 import { csvBuyerSchema } from '@/lib/validations/buyer';
 import { parse } from 'papaparse';
 
@@ -80,18 +79,19 @@ export async function importCSV(formData: FormData) {
       
       for (const row of rows) {
         // Transform row data
-        const transformedRow = {
+        const transformedRow: NewBuyer = {
           fullName: row.fullname || row.full_name || '',
           email: row.email || undefined,
           phone: row.phone || row.phonenumber || row.phonenumber || '',
-          city: row.city || '',
-          propertyType: row.propertytype || row.property_type || '',
-          bhk: row.bhk || undefined,
-          purpose: row.purpose || '',
+          city: (row.city || 'Other') as NewBuyer['city'],
+          propertyType: (row.propertytype || row.property_type || 'Apartment') as NewBuyer['propertyType'],
+          bhk: (row.bhk === '' ? undefined : row.bhk) as NewBuyer['bhk'],
+          purpose: (row.purpose || 'Buy') as NewBuyer['purpose'],
           budgetMin: row.budgetmin || row.budget_min ? parseInt(row.budgetmin || row.budget_min) : undefined,
           budgetMax: row.budgetmax || row.budget_max ? parseInt(row.budgetmax || row.budget_max) : undefined,
-          timeline: row.timeline || '',
-          source: row.source || '',
+          timeline: (row.timeline || 'Exploring') as NewBuyer['timeline'],
+          source: (row.source || 'Other') as NewBuyer['source'],
+          // status defaults to 'New' via schema
           notes: row.notes || undefined,
           tags: row.tags ? row.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
           ownerId: user.id,
@@ -149,19 +149,19 @@ export async function exportCSV(searchParams: Record<string, string | undefined>
     }
 
     if (searchParams.city) {
-      conditions.push(eq(buyers.city, searchParams.city as any));
+      conditions.push(eq(buyers.city, searchParams.city as Buyer['city']));
     }
 
     if (searchParams.propertyType) {
-      conditions.push(eq(buyers.propertyType, searchParams.propertyType as any));
+      conditions.push(eq(buyers.propertyType, searchParams.propertyType as Buyer['propertyType']));
     }
 
     if (searchParams.status) {
-      conditions.push(eq(buyers.status, searchParams.status as any));
+      conditions.push(eq(buyers.status, searchParams.status as Buyer['status']));
     }
 
     if (searchParams.timeline) {
-      conditions.push(eq(buyers.timeline, searchParams.timeline as any));
+      conditions.push(eq(buyers.timeline, searchParams.timeline as Buyer['timeline']));
     }
 
     // Get all matching buyers (not paginated)
