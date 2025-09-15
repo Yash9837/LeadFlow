@@ -352,13 +352,7 @@ npm run test:ui        # Run tests with UI
 npm run lint           # Run ESLint
 ```
 
-## 📞 Support
 
-For issues or questions:
-1. Check the [Issues](../../issues) page
-2. Review the [Admin Setup Guide](./ADMIN_SETUP.md)
-3. Ensure environment variables are correctly set
-4. Verify database migrations have run successfully
 
 ## 📄 License
 
