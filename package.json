@@ -32,6 +32,7 @@
     "lru-cache": "^11.2.1",
     "lucide-react": "^0.544.0",
     "next": "15.5.3",
+    "lightningcss": "^1.27.0",
     "papaparse": "^5.5.3",
     "postgres": "^3.4.7",
     "react": "19.1.0",
